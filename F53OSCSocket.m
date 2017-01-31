@@ -344,10 +344,10 @@
 	   } else
 	   {
 		 //OSC version 1.0 - packet length header
-		 UInt64 length = [data length];
+		 UInt32 length = (int)[data length];
 		 NSMutableData *tcpData = [[NSMutableData alloc] init];
-		 length = OSSwapHostToBigInt64( length );
-		 [tcpData appendBytes:&length length:sizeof( UInt64 )];
+		 length = OSSwapHostToBigInt32( length );
+		 [tcpData appendBytes:&length length:sizeof( UInt32 )];
 		 [tcpData appendData:data];
 		 
 		 [self.tcpSocket writeData:tcpData withTimeout:TIMEOUT tag:[tcpData length]];
