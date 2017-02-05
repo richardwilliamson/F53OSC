@@ -351,6 +351,10 @@
 		 [tcpData appendData:data];
 		 
 		 [self.tcpSocket writeData:tcpData withTimeout:TIMEOUT tag:[tcpData length]];
+		 
+#if F53_OSC_SOCKET_DEBUG
+		 NSLog(@"Sent packet %@", packet);
+#endif
 	   }
     }
     else if ( self.udpSocket )

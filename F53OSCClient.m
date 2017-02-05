@@ -321,19 +321,23 @@
 {
 #if F53_OSC_CLIENT_DEBUG
     NSLog( @"client socket %p didReadData of length %lu. tag : %lu", sock, [data length], tag );
+  NSLog(@" data is %@", data);
+  
 #endif
 	
     if (self.useSLP) //OSC 1.1
 	  [F53OSCParser translateSlipData:data toData:self.readData withState:self.readState destination:self.delegate];
 	else //OSC 1.0 packet length headers
 	{
-	  NSUInteger length = [data length];
 	  
-	  if ( length > sizeof( UInt32 ) )
+	  NSMutableData *mData = [NSMutableData dataWithData:data];
+	  
+	  while ( [mData length] > sizeof( UInt32 ) )
 	  {
-		  const char *buffer = [data bytes];
-		  NSData *lengthData = [data subdataWithRange: NSMakeRange(0, sizeof( UInt32))];
+		  NSUInteger length = [mData length];
 		
+		  const char *buffer = [mData bytes];
+		  NSData *lengthData = [mData subdataWithRange: NSMakeRange(0, sizeof( UInt32))];
 		
 		//RW - this was all previously reading in a UInt64 but eos seems to send UInt32 (as per spec)
 		  //UInt64 dataSize = *((UInt64 *)buffer);
@@ -341,6 +345,10 @@
 		  UInt32 dataSize = *((UInt32*)lengthBuffer);
 
 		  dataSize = OSSwapBigToHostInt32( dataSize );
+		
+#if F53_OSC_CLIENT_DEBUG
+		NSLog( @"data says length is %u", (unsigned int)dataSize);
+#endif
 		
 		  if ( length - sizeof( UInt32 ) >= dataSize )
 		  {
@@ -357,6 +365,7 @@
 				  newData = [NSData data];
 			
 			
+			mData = [NSMutableData dataWithData:[mData subdataWithRange:NSMakeRange(dataSize + 4, mData.length - dataSize -4)]];
 			  #if F53_OSC_CLIENT_DEBUG
 				   NSLog( @"client socket %p dispatching oscData of length %lu, leaving buffer of length %lu.", sock, [oscData length], [data length] );
 			  #endif
