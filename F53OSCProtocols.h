@@ -23,12 +23,15 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 //
+#import <Foundation/Foundation.h>
 
 @class F53OSCMessage;
 
-@protocol F53OSCPacketDestination
+@protocol F53OSCPacketDestination <NSObject>
 
 - (void) takeMessage:(F53OSCMessage *)message;
+@optional
+- (void) socketClosed: (NSError *) error;
 
 @end
 

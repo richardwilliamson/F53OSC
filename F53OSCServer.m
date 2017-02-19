@@ -324,6 +324,12 @@
 
 - (void) udpSocketDidClose:(GCDAsyncUdpSocket *)sock withError:(NSError *)error
 {
+	//NSLog(@"socket closed with error %@", error);
+  
+	if ([self.delegate respondsToSelector:@selector(socketClosed:)])
+	{
+	  [self.delegate socketClosed:error];
+	}
 }
 
 @end
