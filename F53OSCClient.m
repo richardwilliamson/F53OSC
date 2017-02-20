@@ -346,6 +346,9 @@
 
 		  dataSize = OSSwapBigToHostInt32( dataSize );
 		
+		  if (dataSize > length)  //means this isn't valid non-slip osc
+			return;
+		
 #if F53_OSC_CLIENT_DEBUG
 		NSLog( @"data says length is %u", (unsigned int)dataSize);
 #endif
