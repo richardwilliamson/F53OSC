@@ -57,6 +57,8 @@
 @property (atomic, readonly) BOOL isValid;
 @property (atomic, readonly) BOOL isConnected;
 
+@property (nonatomic, retain) dispatch_queue_t queue;
+
 - (BOOL) connect;
 - (void) disconnect;
 
