@@ -289,12 +289,20 @@
 
 + (void) processOscData:(NSData *)data forDestination:(id <F53OSCPacketDestination, NSObject>)destination replyToSocket:(F53OSCSocket *)socket
 {
+  //ignore the success
+  [F53OSCParser  processOscDataWithSuccess:data forDestination:destination replyToSocket:socket];
+}
++ (BOOL) processOscDataWithSuccess:(NSData *)data forDestination:(id <F53OSCPacketDestination, NSObject>)destination replyToSocket:(F53OSCSocket *)socket
+{
     if ( data == nil || destination == nil )
-        return;
+        return false;
     
     NSUInteger length = [data length];
     if ( length == 0 )
-        return;
+	{
+	  NSLog(@"Data had no length");
+	  	return false;
+	}
     
     const char *buffer = [data bytes];
     
@@ -309,9 +317,11 @@
     else
     {
         NSLog( @"Error: Unrecognized OSC message of length %lu.", (unsigned long)length );
-	  NSLog(@" message %s", buffer);
+	  	NSLog(@" message %s", buffer);
+	  return false;
 
     }
+  return true;
 }
 
 + (void) translateSlipData:(NSData *)slipData
@@ -387,9 +397,11 @@
 //		let index = needle.index(needle.startIndex, offsetBy: needle.characters.count)
 //		if (Message.addressPattern.characters.count >= needle.characters.count && Message.addressPattern.substring(to: index)==needle)
   
+  return [message.addressPattern hasPrefix:needle];
+		/*
   long length = needle.length;
   
-  return (message.addressPattern.length >= length && [[message.addressPattern substringToIndex:length] isEqualToString:needle]);
+  return (message.addressPattern.length >= length && [[message.addressPattern substringToIndex:length] isEqualToString:needle]);*/
   
 }
 

@@ -318,6 +318,9 @@
   }
 }
 
+//store the remnants of data which we are as yet unable to process (message split across packets
+NSData *existingData = nil;
+
 - (void) socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag
 {
 #if F53_OSC_CLIENT_DEBUG
@@ -325,65 +328,97 @@
   NSLog(@" data is %@", data);
   
 #endif
-	
-    if (self.useSLP) //OSC 1.1
+
+  if (self.useSLP) //OSC 1.1
 	  [F53OSCParser translateSlipData:data toData:self.readData withState:self.readState destination:self.delegate];
 	else //OSC 1.0 packet length headers
 	{
 	  
-	  NSMutableData *mData = [NSMutableData dataWithData:data];
-	  
+	  //if we have existing data start with that, otherwise start with a blank set of data
+	  NSMutableData *mData;
+	  if (existingData != nil)
+	  {
+		mData = [NSMutableData dataWithData:existingData];
+		[mData appendData:data];
+	  } else
+	  {
+	  	mData = [NSMutableData dataWithData:data];
+	  }
+	 
+	  //check we have enough data to start (there has to be an Int32 at the start(
+	  //we loop here so that if the packet has more than one message we catch them all
 	  while ( [mData length] > sizeof( UInt32 ) )
 	  {
 		  NSUInteger length = [mData length];
 		
 		  const char *buffer = [mData bytes];
+		//get a buffer of just the length from the start of the packer
 		  NSData *lengthData = [mData subdataWithRange: NSMakeRange(0, sizeof( UInt32))];
 		
-		//RW - this was all previously reading in a UInt64 but eos seems to send UInt32 (as per spec)
-		  //UInt64 dataSize = *((UInt64 *)buffer);
+		//and convert the length buffer into the actual length
 		  const char *lengthBuffer = [lengthData bytes];
 		  UInt32 dataSize = *((UInt32*)lengthBuffer);
 
 		  dataSize = OSSwapBigToHostInt32( dataSize );
 		
-		  if (dataSize > length)  //means this isn't valid non-slip osc
-			return;
 		
-#if F53_OSC_CLIENT_DEBUG
-		NSLog( @"data says length is %u", (unsigned int)dataSize);
-#endif
-		
+		//check we have at least as much data as we should have
 		  if ( length - sizeof( UInt32 ) >= dataSize )
 		  {
+			//drop the length off the start of the buffer
 		      buffer += sizeof( UInt32 );
 			  length -= sizeof( UInt32 );
+			
+			  //and take this chunk of the data and put it in the new oscData buffer
 			  NSData *oscData = [NSData dataWithBytes:buffer length:dataSize];
 			
-			  buffer += dataSize;
-			  length -= dataSize;
-			  NSData *newData = nil;
-			  if ( length )
-			     newData = [NSData dataWithBytes:buffer length:length];
-			  else
-				  newData = [NSData data];
-			
-			
-			mData = [NSMutableData dataWithData:[mData subdataWithRange:NSMakeRange(dataSize + 4, mData.length - dataSize -4)]];
 			  #if F53_OSC_CLIENT_DEBUG
 				   NSLog( @"client socket %p dispatching oscData of length %lu, leaving buffer of length %lu.", sock, [oscData length], [data length] );
 			  #endif
 			
-			  [F53OSCParser processOscData:oscData forDestination:self.delegate replyToSocket:self.socket];
+			  if (![F53OSCParser processOscDataWithSuccess:oscData forDestination:self.delegate replyToSocket:self.socket])
+			  {
+				//that failed, which suggests out initial size was incorrect
+				
+				//let's just remove the first byte and go around again until we get valid OSC - this is in case there was a rouge byte at the start giving a valid Int32 which shouldn't have been there!
+				buffer += 1;
+				length -= 1;
+				
+			  } else
+			  {
+				//otherwise, as that was good, remove the old data from the buffer
+				buffer += dataSize;
+				length -= dataSize;
+			  }
+			
+			  //now update the mutableData object with our remaning data
+			  if ( length )
+			  {
+				//NSLog(@"Have some remaining data!");
+				mData = [NSMutableData dataWithBytes:buffer length:length];
+			  }
+			  else
+			  {
+				mData = [NSMutableData dataWithLength:0];
+			  }
+			
+			
 		  } else
 		  {
-			       // TODO: protect against them filling up the buffer with a huge amount of incoming data.
-			
+			NSLog(@"had some overrun data");
+			// TODO: protect against them filling up the buffer with a huge amount of incoming data.
+			break;
 		  }
 	  }
-	 
+	  //if we have data left in our buffer then save it for next time!
+	  if (mData.length > 0)
+	  {
+		existingData = [NSData dataWithData:mData];
+	  } else
+	  {
+		existingData = nil;
+	  }
 	}
-  
     [sock readDataWithTimeout:-1 tag:tag];
 }
 
