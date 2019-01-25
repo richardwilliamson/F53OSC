@@ -338,10 +338,12 @@ NSData *existingData = nil;
 	  NSMutableData *mData;
 	  if (existingData != nil)
 	  {
+		//NSLog(@"using existing data");
 		mData = [NSMutableData dataWithData:existingData];
 		[mData appendData:data];
 	  } else
 	  {
+		//NSLog(@"no existing data");
 	  	mData = [NSMutableData dataWithData:data];
 	  }
 	 
@@ -405,7 +407,7 @@ NSData *existingData = nil;
 			
 		  } else
 		  {
-			NSLog(@"had some overrun data");
+			//NSLog(@"had some overrun data %lu %u", (unsigned long)length, (unsigned int)dataSize);
 			// TODO: protect against them filling up the buffer with a huge amount of incoming data.
 			break;
 		  }
@@ -413,6 +415,7 @@ NSData *existingData = nil;
 	  //if we have data left in our buffer then save it for next time!
 	  if (mData.length > 0)
 	  {
+		//NSLog(@"existing data stored for next time");
 		existingData = [NSData dataWithData:mData];
 	  } else
 	  {
