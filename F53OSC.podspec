@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = 'F53OSC'
-  s.version      = '1.0.1'
+  s.version      = '1.1.0'
   s.summary      = 'A nice open source OSC library for Objective-C.'
 
   s.description  = <<-DESC
@@ -12,21 +12,20 @@ Pod::Spec.new do |s|
                    DESC
 
   s.author       = 'Figure 53, LLC'
-  s.homepage     = 'http://figure53.com/code/'
+  s.homepage     = 'https://figure53.com/studio/'
 
   s.license      = { :type => 'BSD-like', :file => 'LICENSE.txt' }
 
   s.social_media_url   = 'https://twitter.com/figure53'
   
-  s.platforms     = { :ios => '8.4' }
-  s.source        = { :git => 'https://github.com/Figure53/F53OSC.git', :tag => 'v1.0.1' }
-    
+  s.platforms     = { :ios => '8.4', :tvos => '9.0', :osx => '10.9' }
+  s.source        = { :git => 'https://github.com/Figure53/F53OSC.git', :tag => "#{s.version}", }
   
-  s.source_files = '*.{h,m}'
   s.requires_arc = true
+  s.source_files = [
+    'Sources/F53OSC/*.{h,m}',
+    'Sources/Vendor/CocoaAsyncSocket/*.{h,m}',
+  ]
   
-  s.ios.exclude_files = 'F53OSC Monitor/*'
-  s.tvos.exclude_files = 'F53OSC Monitor/*'
-    
   s.frameworks = 'Security', 'CFNetwork'
 end
