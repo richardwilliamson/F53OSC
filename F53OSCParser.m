@@ -300,7 +300,7 @@
     NSUInteger length = [data length];
     if ( length == 0 )
 	{
-	  NSLog(@"Data had no length");
+	  NSLog(@"Data had no length %@", destination);
 	  	return false;
 	}
     

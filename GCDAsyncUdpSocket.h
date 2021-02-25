@@ -20,7 +20,7 @@ extern NSString *const GCDAsyncUdpSocketErrorDomain;
 extern NSString *const GCDAsyncUdpSocketQueueName;
 extern NSString *const GCDAsyncUdpSocketThreadName;
 
-typedef NS_ENUM(NSInteger, GCDAsyncUdpSocketError) {
+typedef NS_ERROR_ENUM(GCDAsyncUdpSocketErrorDomain, GCDAsyncUdpSocketError) {
 	GCDAsyncUdpSocketNoError = 0,          // Never used
 	GCDAsyncUdpSocketBadConfigError,       // Invalid configuration
 	GCDAsyncUdpSocketBadParamError,        // Invalid parameter was passed
@@ -180,22 +180,22 @@ typedef BOOL (^GCDAsyncUdpSocketSendFilterBlock)(NSData *data, NSData *address, 
 **/
 - (instancetype)init;
 - (instancetype)initWithSocketQueue:(nullable dispatch_queue_t)sq;
-- (instancetype)initWithDelegate:(nullable id <GCDAsyncUdpSocketDelegate>)aDelegate delegateQueue:(nullable dispatch_queue_t)dq;
-- (instancetype)initWithDelegate:(nullable id <GCDAsyncUdpSocketDelegate>)aDelegate delegateQueue:(nullable dispatch_queue_t)dq socketQueue:(nullable dispatch_queue_t)sq;
+- (instancetype)initWithDelegate:(nullable id<GCDAsyncUdpSocketDelegate>)aDelegate delegateQueue:(nullable dispatch_queue_t)dq;
+- (instancetype)initWithDelegate:(nullable id<GCDAsyncUdpSocketDelegate>)aDelegate delegateQueue:(nullable dispatch_queue_t)dq socketQueue:(nullable dispatch_queue_t)sq NS_DESIGNATED_INITIALIZER;
 
 #pragma mark Configuration
 
-- (nullable id <GCDAsyncUdpSocketDelegate>)delegate;
-- (void)setDelegate:(nullable id <GCDAsyncUdpSocketDelegate>)delegate;
-- (void)synchronouslySetDelegate:(nullable id <GCDAsyncUdpSocketDelegate>)delegate;
+- (nullable id<GCDAsyncUdpSocketDelegate>)delegate;
+- (void)setDelegate:(nullable id<GCDAsyncUdpSocketDelegate>)delegate;
+- (void)synchronouslySetDelegate:(nullable id<GCDAsyncUdpSocketDelegate>)delegate;
 
 - (nullable dispatch_queue_t)delegateQueue;
 - (void)setDelegateQueue:(nullable dispatch_queue_t)delegateQueue;
 - (void)synchronouslySetDelegateQueue:(nullable dispatch_queue_t)delegateQueue;
 
-- (void)getDelegate:(id <GCDAsyncUdpSocketDelegate> __nullable * __nullable)delegatePtr delegateQueue:(dispatch_queue_t __nullable * __nullable)delegateQueuePtr;
-- (void)setDelegate:(nullable id <GCDAsyncUdpSocketDelegate>)delegate delegateQueue:(nullable dispatch_queue_t)delegateQueue;
-- (void)synchronouslySetDelegate:(nullable id <GCDAsyncUdpSocketDelegate>)delegate delegateQueue:(nullable dispatch_queue_t)delegateQueue;
+- (void)getDelegate:(id<GCDAsyncUdpSocketDelegate> __nullable * __nullable)delegatePtr delegateQueue:(dispatch_queue_t __nullable * __nullable)delegateQueuePtr;
+- (void)setDelegate:(nullable id<GCDAsyncUdpSocketDelegate>)delegate delegateQueue:(nullable dispatch_queue_t)delegateQueue;
+- (void)synchronouslySetDelegate:(nullable id<GCDAsyncUdpSocketDelegate>)delegate delegateQueue:(nullable dispatch_queue_t)delegateQueue;
 
 /**
  * By default, both IPv4 and IPv6 are enabled.
@@ -231,7 +231,7 @@ typedef BOOL (^GCDAsyncUdpSocketSendFilterBlock)(NSData *data, NSData *address, 
 
 /**
  * Gets/Sets the maximum size of the buffer that will be allocated for receive operations.
- * The default maximum size is 9216 bytes.
+ * The default maximum size is 65535 bytes.
  * 
  * The theoretical maximum size of any IPv4 UDP packet is UINT16_MAX = 65535.
  * The theoretical maximum size of any IPv6 UDP packet is UINT32_MAX = 4294967295.
@@ -250,6 +250,21 @@ typedef BOOL (^GCDAsyncUdpSocketSendFilterBlock)(NSData *data, NSData *address, 
 
 - (uint32_t)maxReceiveIPv6BufferSize;
 - (void)setMaxReceiveIPv6BufferSize:(uint32_t)max;
+
+/**
+ * Gets/Sets the maximum size of the buffer that will be allocated for send operations.
+ * The default maximum size is 65535 bytes.
+ * 
+ * Given that a typical link MTU is 1500 bytes, a large UDP datagram will have to be 
+ * fragmented, and that’s both expensive and risky (if one fragment goes missing, the
+ * entire datagram is lost).  You are much better off sending a large number of smaller
+ * UDP datagrams, preferably using a path MTU algorithm to avoid fragmentation.
+ *
+ * You must set it before the sockt is created otherwise it won't work.
+ *
+ **/
+- (uint16_t)maxSendBufferSize;
+- (void)setMaxSendBufferSize:(uint16_t)max;
 
 /**
  * User data allows you to associate arbitrary information with the socket.

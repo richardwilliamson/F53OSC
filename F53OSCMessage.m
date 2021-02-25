@@ -114,8 +114,13 @@ static NSCharacterSet *LEGAL_METHOD_CHARACTERS = nil;
     // Create a working copy and place a token for each escaped " character.
     NSString *QUOTE_CHAR_TOKEN = @"⍁"; // not trying to be perfect here; we just use an unlikely character
     NSString *workingArguments = [qscString substringFromIndex:[address length]];
+    //replace ” with " or we don't get them across.. note the two characters look the same but are actually different (char 148 and 149)
+    workingArguments = [workingArguments stringByReplacingOccurrencesOfString:@"“" withString:@"\""];
+    workingArguments = [workingArguments stringByReplacingOccurrencesOfString:@"”" withString:@"\""];
+
     workingArguments = [workingArguments stringByReplacingOccurrencesOfString:@"\\\"" withString:QUOTE_CHAR_TOKEN];
-    
+
+
     // The remaining " characters signify quoted string arguments; they should be paired up.
     NSArray *splitOnQuotes = [workingArguments componentsSeparatedByString:@"\""];
     if ( [splitOnQuotes count] % 2 != 1 )
