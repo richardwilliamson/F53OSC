@@ -36,12 +36,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable F53OSCMessage *) parseOscMessageData:(NSData *)data;
 
-<<<<<<< HEAD:F53OSCParser.h
 + (void) processOscData:(NSData *)data forDestination:(id <F53OSCPacketDestination>)destination replyToSocket:(F53OSCSocket *)socket;
 + (BOOL) processOscDataWithSuccess:(NSData *)data forDestination:(id <F53OSCPacketDestination>)destination replyToSocket:(F53OSCSocket *)socket;
-=======
-+ (void) processOscData:(NSData *)data forDestination:(id<F53OSCPacketDestination>)destination replyToSocket:(F53OSCSocket *)socket;
->>>>>>> 96ced2fde624a1e637dc74ba34ef19e7a40d0b75:Sources/F53OSC/F53OSCParser.h
+
 
 + (void) translateSlipData:(NSData *)slipData toData:(NSMutableData *)data withState:(NSMutableDictionary *)state destination:(id<F53OSCPacketDestination>)destination;
 

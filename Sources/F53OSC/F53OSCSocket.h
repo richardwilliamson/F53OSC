@@ -60,7 +60,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (F53OSCSocket *) socketWithUdpSocket:(GCDAsyncUdpSocket *)socket;
 
-<<<<<<< HEAD:F53OSCSocket.h
 - (id) initWithTcpSocket:(GCDAsyncSocket *)socket;
 - (id) initWithTcpSocket:(GCDAsyncSocket *)socket withSLP:(BOOL)slp;
 
@@ -71,15 +70,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (atomic, readonly) BOOL isTcpSocket;
 @property (atomic, readonly) BOOL isUdpSocket;
 @property (atomic, assign) BOOL useSLP;
-=======
-- (instancetype) initWithTcpSocket:(GCDAsyncSocket *)socket;
-- (instancetype) initWithUdpSocket:(GCDAsyncUdpSocket *)socket;
-
-@property (strong, readonly, nullable) GCDAsyncSocket *tcpSocket;
-@property (strong, readonly, nullable) GCDAsyncUdpSocket *udpSocket;
-@property (nonatomic, readonly) BOOL isTcpSocket;
-@property (nonatomic, readonly) BOOL isUdpSocket;
->>>>>>> 96ced2fde624a1e637dc74ba34ef19e7a40d0b75:Sources/F53OSC/F53OSCSocket.h
 
 @property (nonatomic, copy, nullable) NSString *interface;
 @property (nonatomic, copy, nullable) NSString *host;

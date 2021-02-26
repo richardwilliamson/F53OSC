@@ -162,7 +162,6 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-<<<<<<< HEAD:F53OSCSocket.m
 - (id) initWithTcpSocket:(GCDAsyncSocket *)socket withSLP:(BOOL)slp
 {
   self = [super init];
@@ -178,10 +177,8 @@ NS_ASSUME_NONNULL_BEGIN
   return self;
 }
 
-- (id) initWithUdpSocket:(GCDAsyncUdpSocket *)socket
-=======
+
 - (instancetype) initWithUdpSocket:(GCDAsyncUdpSocket *)socket
->>>>>>> 96ced2fde624a1e637dc74ba34ef19e7a40d0b75:Sources/F53OSC/F53OSCSocket.m
 {
     self = [super init];
     if ( self )

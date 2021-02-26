@@ -33,24 +33,23 @@
 @protocol F53OSCClientDelegate;
 
 
-<<<<<<< HEAD:F53OSCClient.h
-@property (nonatomic, weak) id <F53OSCPacketDestination, F53OSCClientDelegate> delegate;
-@property (nonatomic, copy) NSString *interface;
-@property (nonatomic, copy) NSString *host;
-@property (nonatomic, assign) UInt16 port;
-@property (nonatomic, assign) BOOL useTcp;
-@property (nonatomic, assign) BOOL useSLP;
+//@property (nonatomic, weak) id <F53OSCPacketDestination, F53OSCClientDelegate> delegate;
+//@property (nonatomic, copy) NSString *interface;
+//@property (nonatomic, copy) NSString *host;
+//@property (nonatomic, assign) UInt16 port;
+//@property (nonatomic, assign) BOOL useTcp;
+//@property (nonatomic, assign) BOOL useSLP;
+//
+//@property (nonatomic, strong) id userData;
+//@property (nonatomic, copy) NSDictionary *state;
+//@property (atomic, readonly) NSString *title;
+//@property (atomic, readonly) BOOL isValid;
+//@property (atomic, readonly) BOOL isConnected;
+//
+//@property (nonatomic, retain) dispatch_queue_t queue;
 
-@property (nonatomic, strong) id userData;
-@property (nonatomic, copy) NSDictionary *state;
-@property (atomic, readonly) NSString *title;
-@property (atomic, readonly) BOOL isValid;
-@property (atomic, readonly) BOOL isConnected;
+//- (BOOL) connect;
 
-@property (nonatomic, retain) dispatch_queue_t queue;
-
-- (BOOL) connect;
-=======
 NS_ASSUME_NONNULL_BEGIN
 
 #define F53_OSC_CLIENT_DEBUG 0
@@ -64,6 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign)                   UInt16 port;
 @property (nonatomic, getter=isIPv6Enabled)     BOOL IPv6Enabled; // default NO
 @property (nonatomic, assign)                   BOOL useTcp;
+@property (nonatomic, assign)                   BOOL useSLP;
+
 @property (nonatomic, strong, nullable)         id userData;
 @property (nonatomic, copy)                     NSDictionary *state;
 @property (nonatomic, readonly)                 NSString *title;
@@ -71,7 +72,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly)                 BOOL isConnected;
 
 - (BOOL) connect;   // NOTE: returns NO if internal F53OSCSocket uses TCP and is already connected
->>>>>>> 96ced2fde624a1e637dc74ba34ef19e7a40d0b75:Sources/F53OSC/F53OSCClient.h
+
 - (void) disconnect;
 
 - (void) sendPacket:(F53OSCPacket *)packet;

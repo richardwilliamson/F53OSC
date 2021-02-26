@@ -384,7 +384,7 @@ NS_ASSUME_NONNULL_BEGIN
   
 	if ([self.delegate respondsToSelector:@selector(socketClosed:)])
 	{
-	  [self.delegate socketClosed:error];
+	  [self.delegate socketDidClose:error];
 	}
 }
 

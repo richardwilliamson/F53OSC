@@ -258,26 +258,6 @@ NS_ASSUME_NONNULL_BEGIN
                             return nil;
                         }
                         break;
-<<<<<<< HEAD:F53OSCParser.m
-					case 'F': //False (no data)
-					case 'T': //True (no data)
-					  numberArg = [NSNumber numberWithBool:(type=='T')];
-					  if ( numberArg )
-					  {
-						[args addObject:numberArg];
-						//don't advance the buffer
-						
-						if ( [[NSUserDefaults standardUserDefaults] boolForKey:@"debugIncomingOSC"] )
-						  NSLog( @"    bool: %@", numberArg );
-					  }
-					  else
-					  {
-						NSLog( @"Error: Unable to parse bool argument for OSC method %@", addressPattern );
-						return nil;
-					  }
-					break;
-
-=======
                     case 'T':
                         [args addObject:[F53OSCValue oscTrue]]; // no data - do not advance the buffer
                         
@@ -302,7 +282,6 @@ NS_ASSUME_NONNULL_BEGIN
                         if ( [[NSUserDefaults standardUserDefaults] boolForKey:@"debugIncomingOSC"] )
                             NSLog( @"    IMPLUSE" );
                         break;
->>>>>>> 96ced2fde624a1e637dc74ba34ef19e7a40d0b75:Sources/F53OSC/F53OSCParser.m
                     default:
                         NSLog( @"Error: Unrecognized type '%c' found in type tag for OSC method %@", type, addressPattern );
                         return nil;

@@ -42,7 +42,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nullable)    F53OSCSocket *socket;
 @property (strong, nullable)    NSMutableData *readData;
 @property (strong, nullable)    NSMutableDictionary *readState;
-
 - (void) destroySocket;
 - (void) createSocket;
 
@@ -72,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
         self.socket = nil;
         self.readData = [NSMutableData data];
         self.readState = [NSMutableDictionary dictionary];
-	  	self.queue = dispatch_get_main_queue();
+	  	//self.queue = dispatch_get_main_queue();
     }
     return self;
 }
@@ -82,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
     _delegate = nil;
     _interface = nil;
     _host = nil;
-    _userData = nil;
+    self.userData = nil;
     
     [self destroySocket];
     _readData = nil;
@@ -107,21 +106,13 @@ NS_ASSUME_NONNULL_BEGIN
     {
         _socketDelegateQueue = dispatch_get_main_queue();
         self.delegate = nil;
-<<<<<<< HEAD:F53OSCClient.m
         self.interface = [coder decodeObjectForKey:@"interface"];
         self.host = [coder decodeObjectForKey:@"host"];
         self.port = [[coder decodeObjectForKey:@"port"] unsignedShortValue];
+        self.IPv6Enabled = [[coder decodeObjectOfClass:[NSNumber class] forKey:@"IPv6Enabled"] boolValue];
         self.useTcp = [[coder decodeObjectForKey:@"useTcp"] boolValue];
 	    self.useSLP = [[coder decodeObjectForKey:@"useSLP"] boolValue];
         self.userData = [coder decodeObjectForKey:@"userData"];
-=======
-        self.interface = [coder decodeObjectOfClass:[NSString class] forKey:@"interface"];
-        self.host = [coder decodeObjectOfClass:[NSString class] forKey:@"host"];
-        self.port = [[coder decodeObjectOfClass:[NSNumber class] forKey:@"port"] unsignedShortValue];
-        self.IPv6Enabled = [[coder decodeObjectOfClass:[NSNumber class] forKey:@"IPv6Enabled"] boolValue];
-        self.useTcp = [[coder decodeObjectOfClass:[NSNumber class] forKey:@"useTcp"] boolValue];
-        self.userData = [coder decodeObjectOfClass:[NSObject class] forKey:@"userData"];
->>>>>>> 96ced2fde624a1e637dc74ba34ef19e7a40d0b75:Sources/F53OSC/F53OSCClient.m
         self.socket = nil;
         self.readData = [NSMutableData data];
         self.readState = [NSMutableDictionary dictionary];
@@ -168,25 +159,18 @@ NS_ASSUME_NONNULL_BEGIN
 {
     if ( self.useTcp )
     {
-<<<<<<< HEAD:F53OSCClient.m
-        GCDAsyncSocket *tcpSocket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:self.queue];
-        self.socket = [F53OSCSocket socketWithTcpSocket:tcpSocket withSLP:self.useSLP];
-=======
         GCDAsyncSocket *tcpSocket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:self.socketDelegateQueue];
-        self.socket = [F53OSCSocket socketWithTcpSocket:tcpSocket];
+        self.socket = [F53OSCSocket socketWithTcpSocket:tcpSocket withSLP:self.useSLP];
+
         self.socket.IPv6Enabled = self.isIPv6Enabled;
->>>>>>> 96ced2fde624a1e637dc74ba34ef19e7a40d0b75:Sources/F53OSC/F53OSCClient.m
         if ( self.socket )
             [self.readState setObject:self.socket forKey:@"socket"];
 		
     }
     else // use UDP
     {
-<<<<<<< HEAD:F53OSCClient.m
-        GCDAsyncUdpSocket *udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:self.queue];
-=======
+
         GCDAsyncUdpSocket *udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:self.socketDelegateQueue];
->>>>>>> 96ced2fde624a1e637dc74ba34ef19e7a40d0b75:Sources/F53OSC/F53OSCClient.m
         self.socket = [F53OSCSocket socketWithUdpSocket:udpSocket];
         self.socket.IPv6Enabled = self.isIPv6Enabled;
     }
@@ -247,7 +231,6 @@ NS_ASSUME_NONNULL_BEGIN
     [self destroySocket];
 }
 
-<<<<<<< HEAD:F53OSCClient.m
 @synthesize useSLP;
 
 - (void) setUseSLP:(BOOL)flag
@@ -259,12 +242,8 @@ NS_ASSUME_NONNULL_BEGIN
   
   [self destroySocket];
 }
-@synthesize userData;
 
-- (void) setUserData:(id)newUserData
-=======
 - (void) setUserData:(nullable id)userData
->>>>>>> 96ced2fde624a1e637dc74ba34ef19e7a40d0b75:Sources/F53OSC/F53OSCClient.m
 {
     if ( userData == [NSNull null] )
         userData = nil;
